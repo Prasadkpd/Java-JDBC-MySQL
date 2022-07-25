@@ -1,7 +1,7 @@
 import java.io.*;
 import java.sql.*;
 
-public class RetriveImage {
+public class RetriveFile {
 
     public static void main(String[] args) {
 
@@ -9,18 +9,19 @@ public class RetriveImage {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/java-jdbc","root","");
 
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from imagetable");
+            PreparedStatement preparedStatement = connection.prepareStatement("select * from filetable");
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.first();
 
-            if (resultSet.last()){
-                Blob blob = resultSet.getBlob(2);
-                byte barr[] = blob.getBytes(1,(int) blob.length());
+            Clob c = resultSet.getClob(2);
+            Reader r = c.getCharacterStream();
 
-                FileOutputStream fileOutputStream = new FileOutputStream("d:\\create.png");
-                fileOutputStream.write(barr);
-                fileOutputStream.close();
-            }
+            FileWriter fileWriter = new FileWriter("D:\\create.txt");
+            int i;
+            while ((i=r.read())!=-1)
+                fileWriter.write((char)i);
 
+            fileWriter.close();
             System.out.println("Done");
             connection.close();
 

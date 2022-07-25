@@ -1,7 +1,7 @@
 import java.io.*;
 import java.sql.*;
 
-public class RetriveImage {
+public class StoreFile {
 
     public static void main(String[] args) {
 
@@ -9,19 +9,13 @@ public class RetriveImage {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/java-jdbc","root","");
 
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from imagetable");
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.last()){
-                Blob blob = resultSet.getBlob(2);
-                byte barr[] = blob.getBytes(1,(int) blob.length());
-
-                FileOutputStream fileOutputStream = new FileOutputStream("d:\\create.png");
-                fileOutputStream.write(barr);
-                fileOutputStream.close();
-            }
-
-            System.out.println("Done");
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into filetable values(?,?)");
+            File file = new File("D:\\sam.txt");
+            FileReader fileReader = new FileReader(file);
+            preparedStatement.setInt(1,1);
+            preparedStatement.setCharacterStream(2,fileReader,(int)file.length());
+            int i=preparedStatement.executeUpdate();
+            System.out.println(i+" records affected");
             connection.close();
 
         } catch (ClassNotFoundException e) {
